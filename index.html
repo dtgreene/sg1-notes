@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/a11y-dark.min.css"
+      integrity="sha512-Vj6gPCk8EZlqnoveEyuGyYaWZ1+jyjMPg8g4shwyyNlRQl6d3L9At02ZHQr5K6s5duZl/+YKMnM3/8pDhoUphg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>SG1 Admin Notes</title>
+  </head>
+  <body>
+    <div class="container pt-5">
+      <section class="mb-5">
+        <div class="h3 mb-3">SG1 Admin Notes</div>
+        <hr />
+        <div class="row">
+          <div class="col-6">
+            <img
+              src="./assets/charlie_explain.jpeg"
+              class="img-fluid rounded shadow"
+            />
+          </div>
+          <div class="col-6">
+            <div class="d-flex align-items-center h-100">
+              <div>
+                <p>A brief exploration of Shipt Admin's architecture.</p>
+                <p class="text-muted">
+                  <b>Disclaimer</b>: I (Dylan) didn't work on sg1 but hope this
+                  information will help someone (and myself) better understand
+                  the Shipt Admin architecture.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="mb-5">
+        <div class="h3 mb-3">Related Projects</div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Repo</th>
+              <th scope="col">Packages</th>
+              <th scope="col" class="w-50">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="col">
+                <link-item data-href="https://github.com/MrFrankel/share-loader"
+                  >sg1-loader</link-item
+                >
+              </th>
+              <td>
+                <ul class="pl-4">
+                  <li>
+                    <link-item
+                      data-href="https://www.npmjs.com/package/sg1-loader"
+                      >sg1-loader</link-item
+                    >
+                  </li>
+                </ul>
+              </td>
+              <td>
+                Looks like a re-upload of the
+                <link-item
+                  data-href="https://www.npmjs.com/package/share-loader"
+                  >share-loader</link-item
+                >
+                package.
+              </td>
+            </tr>
+            <tr>
+              <th scope="col">
+                <link-item data-href="https://github.com/shipt/sg1"
+                  >shipt/sg1</link-item
+                >
+              </th>
+              <td>
+                <ul class="pl-4">
+                  <li>
+                    <link-item
+                      data-href="https://www.npmjs.com/package/@shipt/sg1"
+                      >@shipt/sg1</link-item
+                    >
+                  </li>
+                  <li>
+                    <link-item
+                      data-href="https://www.npmjs.com/package/@shipt/sg1-module"
+                      >@shipt/sg1-module</link-item
+                    >
+                  </li>
+                </ul>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <th scope="col">
+                <link-item data-href="https://github.com/shipt/create-react-app"
+                  >shipt/create-react-app</link-item
+                >
+              </th>
+              <td>
+                <ul class="pl-4">
+                  <li>
+                    <link-item
+                      data-href="https://www.npmjs.com/package/@shipt/sg1-scripts"
+                      >@shipt/sg1-scripts</link-item
+                    >
+                  </li>
+                  <li>
+                    <link-item
+                      data-href="https://www.npmjs.com/package/@shipt/sg1-module-scripts"
+                      >@shipt/sg1-module-scripts</link-item
+                    >
+                  </li>
+                </ul>
+              </td>
+              <td>
+                These packages are modified versions of the
+                <b>react-scripts</b> package. The source-code for each package
+                lives in the
+                <link-item data-href="https://github.com/shipt/create-react-app"
+                  >shipt/create-react-app</link-item
+                >
+                repo on a branch with the same name as the package.
+              </td>
+            </tr>
+            <tr>
+              <th scope="col">
+                <link-item data-href="https://github.com/shipt/sg1-admin"
+                  >sg1-admin</link-item
+                >
+              </th>
+              <td><div class="text-muted">N/A</div></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section class="mb-5">
+        <div class="h3 mb-3">Overview</div>
+        <hr />
+        <p>
+          Shipt Admin uses a micro-frontend framework known as sg1 which splits
+          the app into two primary pieces: a parent app (sg1-admin) and whatever
+          module is currently being rendered (sg1-shoppers-module,
+          sg1-orders-module, etc). The main goal of the sg1 framework is to
+          group the different app routes into separate modules that can be built
+          and deployed independently from the parent app. This allows different
+          teams to own different sections of Shipt Admin without ever touching
+          the parent app. This setup also enables the modules to only worry
+          about the content of their pages while common tasks such as auth,
+          theme provision, etc. happen at the parent app level.
+        </p>
+        <p>
+          The sg1 framework uses a central manifest file that contains a file
+          map for each module. During the module's deployment process, the
+          module's file map in the manifest is updated.
+        </p>
+        <p>
+          Here's a snippet of the manifest containing the file map for
+          sg1-shoppers-module:
+        </p>
+        <div class="mb-5">
+          <pre class="shadow rounded"><code class="language-json">{
+  "sg1-shoppers-module": {
+    "version": "1.2.1",
+    "timestamp": 1663345990887,
+    "context": "/sg1-shoppers-module/context.87714ac0.js",
+    "context.map": "/sg1-shoppers-module/context.87714ac0.js.map",
+    "module": "/sg1-shoppers-module/module.ee54c1e5.js",
+    "module.map": "/sg1-shoppers-module/module.ee54c1e5.js.map",
+    "module.ee54c1e5.LICENSE": "/sg1-shoppers-module/module.ee54c1e5.js.LICENSE",
+    "precache-manifest.b7aa0ae6221ebe12b2550dd19b890d33": "/sg1-shoppers-module/precache-manifest.b7aa0ae6221ebe12b2550dd19b890d33.js",
+    "service-worker": "/sg1-shoppers-module/service-worker.js"
+  }
+}</code></pre>
+          <div class="text-center">
+            <link-item
+              data-href="https://sg1-modules.staging.shipt.com/manifest.json"
+            ></link-item>
+          </div>
+        </div>
+        <p>
+          Even though this is a web app, you might notice there aren't any HTML
+          files being output by the module. Instead, there is a
+          <b>context</b> and <b>module</b> file. Sticking with
+          sg1-shoppers-module, here's a look at its context file with just the
+          <code>/shoppers</code> route:
+        </p>
+        <div class="mb-5">
+          <pre class="shadow rounded"><code class="language-jsx">import {
+  ContextExporter,
+  ISG1ModuleContext,
+  IMenuSection,
+  ISG1Route,
+} from '@shipt/nova'
+import { name } from '../package.json'
+
+export class Context implements ISG1ModuleContext {
+  ID = name
+
+  // Routes accessible from menu
+  get Menu(): IMenuSection[] {
+    return [
+      {
+        sort: 1,
+        name: 'Users',
+        items: [
+          {
+            sort: 2,
+            name: 'Shoppers',
+            route: {
+              path: '/shoppers',
+              component: 'Shoppers',
+              options: {
+                exact: true,
+              },
+            },
+          },
+        ],
+      },
+    ]
+  }
+
+  // Routes accessible from components, but not in menu
+  get SubRoutes(): ISG1Route[] {
+    return [
+      {
+        path: '/shoppers',
+        component: 'Shoppers',
+      },
+    ]
+  }
+}
+
+ContextExporter.export(new Context())</code></pre>
+          <div class="text-center">
+            <link-item
+              data-href="https://github.com/shipt/sg1-shoppers-module/blob/main/src/context.ts"
+            ></link-item>
+          </div>
+        </div>
+        <p>
+          The context file contains metadata about the module and its routes.
+          This tells the sg1 framework which routes are available, which
+          component goes with each route, and what menu items should be added.
+        </p>
+        <p>
+          Here's the module file for sg1-shoppers-module (again with just the
+          <code>/shoppers</code> route):
+        </p>
+        <div class="mb-5">
+          <pre
+            class="shadow rounded"
+          ><code class="language-jsx">import { ModuleExporter } from '@shipt/nova'
+import { withFeatureFlaggedAccess } from '@shipt/sg1-common'
+import { withProviders } from 'hooks/withProviders'
+import { RedirectToOGDrivers } from './components/Redirects'
+import { Shoppers } from 'pages'
+
+const ADMIN_SHOPPER_SERVICE = 'admin_shopper'
+
+ModuleExporter.export(
+  'Shoppers',
+  withProviders(
+    withFeatureFlaggedAccess(
+      Shoppers,
+      {
+        service: ADMIN_SHOPPER_SERVICE,
+        flagName: 'ng_shopper_search',
+      },
+      RedirectToOGDrivers,
+    ),
+  ),
+)</code></pre>
+          <div class="text-center">
+            <link-item
+              data-href="https://github.com/shipt/sg1-shoppers-module/blob/main/src/module.ts"
+            ></link-item>
+          </div>
+        </div>
+        <p>
+          The main goal of this file to export the components named in the
+          context file. In this case, the context file connects the
+          <code>/shoppers</code> route with the
+          <jsx-comp>Shoppers</jsx-comp> component which is exported here.
+        </p>
+        <p>
+          Whenever an sg1-admin page loads, the sg1 framework downloads the
+          manifest, downloads each module's context file, and generates a list
+          of the available routes which are then rendered by sg1-admin. When one
+          of the routes matches the user's url, the appropriate module file is
+          downloaded and the matching component is rendered.
+        </p>
+        <blockquote class="blockquote text-center text-muted py-3">
+          What about the Shipt create-react-app fork?
+        </blockquote>
+        <p>
+          Most of the changes in the CRA fork involve dependency sharing which
+          is a benefit but not strictly required in a micro-frontend.
+        </p>
+      </section>
+      <section class="mb-5">
+        <div class="h3 mb-3">Breakdown</div>
+        <hr />
+        <div class="row mb-2">
+          <div class="col-2">
+            <div class="d-flex flex-column h-100 align-items-center">
+              <div class="h4 text-hand shadow step">Step 1</div>
+              <div class="flex-fill border"></div>
+            </div>
+          </div>
+          <div class="col-10 pt-5">
+            <p>A user visits the sg1-admin app.</p>
+            <img
+              src="./assets/admin_loading.png"
+              class="img-fluid rounded shadow"
+            />
+          </div>
+        </div>
+        <div class="row py-3">
+          <div class="col-2">
+            <div class="d-flex flex-column h-100 align-items-center">
+              <div class="h4 text-hand shadow step">Step 2</div>
+              <div class="flex-fill border"></div>
+            </div>
+          </div>
+          <div class="col-10 pt-5">
+            <p>
+              Using the sg1 framework, sg1-admin first downloads the manifest
+              containing the file maps for each module. Using the module file
+              maps, each context file is then downloaded.
+            </p>
+            <div class="row">
+              <div class="col-6">
+                <img
+                  src="./assets/admin_loading.png"
+                  class="img-fluid rounded shadow"
+                />
+              </div>
+              <div class="col-6">
+                <div class="d-flex align-items-center mb-3">
+                  <div class="w-25 text-center">
+                    <arrow-icon></arrow-icon>
+                  </div>
+                  <div class="w-75 text-center">
+                    <div class="border rounded p-3 text-center shadow">
+                      <document-icon class="icon-manifest"></document-icon>
+                      <div class="text-muted">manifest.json</div>
+                      <hr />
+                      <pre
+                        class="rounded"
+                      ><code class="language-json text-left">{
+  "sg1-orders-module": { ... },
+  "sg1-referrals-module": { ... },
+  "sg1-search-boost-module": { ... },
+  "sg1-shopper-pay-module": { ... },
+  "sg1-shoppers-module": { ... },
+  ...
+}</code></pre>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center">
+                  <div class="w-25 text-center">
+                    <arrow-icon />
+                  </div>
+                  <div class="w-75 text-center">
+                    <div class="border rounded p-3 text-center shadow">
+                      <div class="mb-3">
+                        <document-icon class="icon-context"></document-icon>
+                        <div class="text-muted">context.f3f0caac.js</div>
+                      </div>
+                      <div class="mb-3">
+                        <document-icon class="icon-context"></document-icon>
+                        <div class="text-muted">context.f3f0caac.js</div>
+                      </div>
+                      <div>
+                        <document-icon class="icon-context"></document-icon>
+                        <div class="text-muted">. . .</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row py-3">
+          <div class="col-2">
+            <div class="d-flex flex-column h-100 align-items-center">
+              <div class="h4 text-hand shadow step">Step 3</div>
+              <div class="flex-fill border"></div>
+            </div>
+          </div>
+          <div class="col-10 pt-5">
+            <p>
+              Once the context files have been downloaded, the menu items and
+              list of available routes can be rendered by sg1-admin.
+            </p>
+            <img
+              src="./assets/admin_sidebar.png"
+              class="img-fluid rounded shadow"
+            />
+          </div>
+        </div>
+        <div class="row py-3">
+          <div class="col-2">
+            <div class="d-flex flex-column h-100 align-items-center">
+              <div class="h4 text-hand shadow step">Step 4</div>
+              <div class="flex-fill border"></div>
+            </div>
+          </div>
+          <div class="col-10 pt-5">
+            <p>
+              Finally, when the matched route is rendered (<code
+                >/shoppers</code
+              >
+              in this case), the sg1 framework uses the information from the
+              context files to download the appropriate module file which
+              contains the actual React component for this route.
+            </p>
+            <div class="row">
+              <div class="col-6">
+                <img
+                  src="./assets/admin_shoppers.png"
+                  class="img-fluid rounded shadow"
+                />
+              </div>
+              <div class="col-6">
+                <div class="d-flex align-items-center mb-3">
+                  <div class="w-25 text-center">
+                    <arrow-icon></arrow-icon>
+                  </div>
+                  <div class="w-75 text-center">
+                    <div class="border rounded p-3 text-center shadow">
+                      <document-icon class="icon-module"></document-icon>
+                      <div class="text-muted">module.ee54c1e5.js</div>
+                      <hr />
+                      <jsx-comp class="nowrap d-block">Shoppers</jsx-comp>
+                      <jsx-comp class="nowrap d-block"
+                        >ShopperMassDisable</jsx-comp
+                      >
+                      <jsx-comp class="nowrap d-block"
+                        >ShopperMassCertify</jsx-comp
+                      >
+                      <code class="nowrap d-block">. . .</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="h3 mb-3">Further Reading</div>
+        <hr />
+        <link-item
+          class="d-block"
+          data-href="https://martinfowler.com/articles/micro-frontends.html"
+        ></link-item>
+        <link-item
+          class="d-block"
+          data-href="https://shipt.slack.com/archives/CDJ7UN8KX/p1552667955074900"
+        ></link-item>
+        <link-item
+          class="d-block"
+          data-href="https://shipt.slack.com/archives/CGPH2FDE3/p1597845710214600"
+        ></link-item>
+      </section>
+    </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"
+      integrity="sha512-gU7kztaQEl7SHJyraPfZLQCNnrKdaQi5ndOyt4L4UPL/FHDd/uB9Je6KDARIqwnNNE27hnqoWLBq+Kpe4iHfeQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="./index.js"></script>
+  </body>
+</html>
