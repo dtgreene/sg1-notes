@@ -8,13 +8,14 @@ body {
 
 .step {
   border-radius: 50%;
-  width: 75px;
-  height: 75px;
+  width: 80px;
+  height: 80px;
   display: flex;
   justify-content: center;
   align-items: center;
   background: #038767;
   color: #fff;
+  font-size: 64px;
 }
 
 .icon {
