@@ -6,16 +6,6 @@ body {
   font-family: 'Gochi Hand', cursive;
 }
 
-.example-1 .bg-admin {
-  box-shadow: inset 0 0 0 4px #ff4472;
-  background: #ffe4e9;
-}
-
-.example-1 .bg-blueberry {
-  box-shadow: inset 0 0 0 4px #44a9ff;
-  background: #c8f2ff;
-}
-
 .step {
   border-radius: 50%;
   width: 75px;
